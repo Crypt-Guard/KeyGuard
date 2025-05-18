@@ -1,6 +1,6 @@
 # Secure Password Generator GUI
 
-![license](https://img.shields.io/badge/license-MIT-blue.svg) ![python](https://img.shields.io/badge/python-3.8%2B-blue)
+![license](https://img.shields.io/badge/license-Apache%202.0-blue.svg) ![python](https://img.shields.io/badge/python-3.8%2B-blue)
 
 A cross‑platform desktop application (Tkinter + ttkbootstrap) that generates cryptographically strong passwords, copies them to the clipboard, optionally saves them to a local file, and offers one‑click export as a standalone **.exe** via PyInstaller.
 
@@ -95,8 +95,7 @@ All PRs must pass **pre‑commit** hooks (`black`, `flake8`, `isort`) and includ
 
 ## 📜 License
 
-Distributed under the MIT License. See [`LICENSE`](LICENSE) for more information.
-
+Distributed under the [Apache 2.0 License](LICENSE). See [`LICENSE`](LICENSE) for more information.
 ---
 
 ## 🙏 Acknowledgements
