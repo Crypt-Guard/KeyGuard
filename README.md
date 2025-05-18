@@ -18,8 +18,6 @@ A cross‑platform desktop application (Tkinter + ttkbootstrap) that generates
 * **One‑file build** – `pyinstaller --onefile --noconsole`
 * Runs on **Windows 10/11, macOS 12+, Linux (X11/Wayland)**
 
-![screenshot dark](docs/screenshot-dark.png)
-
 ---
 
 ## 📦 Getting Started
