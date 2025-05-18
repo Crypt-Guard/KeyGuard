@@ -15,7 +15,7 @@ Only the **latest release** and the current `main` branch receive security updat
 
 If you discover a security issue **please do not create a public GitHub issue**. Instead:
 
-1. Email **[security@yourdomain.example](cryptguard737@gmail.com)** with the subject `[PASSGEN SECURITY]`.
+1. Email **[cryptguard737@gmail.com](mailto:cryptguard737@gmail.com)** with the subject `[PASSGEN SECURITY]`.
 2. Include a minimal reproduction (PoC) and the affected commit hash / release.
 3. If you wish, encrypt your report using our PGP key (`gpg --recv-key 0xDEADBEEF`).
 
