@@ -53,8 +53,6 @@ pyinstaller --onefile --noconsole --icon=assets/key.ico src/passgen_gui.py
 
 Output will be in `dist/passgen_gui.exe`.
 
-> See [`docs/BUILD.md`](docs/BUILD.md) for advanced options (icons, UPX, splash, hidden‑imports).
-
 ---
 
 ## 🛠️ Usage
