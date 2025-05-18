@@ -1,8 +1,6 @@
 """
 KeyGuard 1.3.2 – nonce determinístico, AAD, zeroização, mlock opcional
 ---------------------------------------------------------------------
-• Corrige AttributeError ao cancelar a senha-mestra
-• Arquivo de log renomeado para logKeyGuard.log
 """
 from __future__ import annotations
 import json, math, secrets, logging, string, base64, hmac, hashlib, struct, mmap
