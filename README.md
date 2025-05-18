@@ -95,7 +95,7 @@ All PRs must pass **pre‑commit** hooks (`black`, `flake8`, `isort`) and includ
 
 ## 📜 License
 
-Distributed under the [Apache 2.0 License](LICENSE). See [`LICENSE`](LICENSE) for more information.
+- Licensed under the [Apache 2.0 License](LICENSE).
 ---
 
 ## 🙏 Acknowledgements
