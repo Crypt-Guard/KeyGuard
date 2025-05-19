@@ -2,37 +2,64 @@
 
 ---
 
+## \[1.5.2] – 2025‑05‑18
+
+### Added
+
+* **KeyObfuscator** implementado para proteger as chaves criptográficas na memória, dificultando ataques por inspeção de RAM.
+* Método aprimorado de segurança `wipe()` em `SecureBytes` para sobrescrever dados sensíveis com bytes aleatórios antes da zeroização final.
+* Funcionalidade para **alteração segura da senha-mestra**, incluindo recriptografia automática do vault com novo salt e nova chave derivada.
+* Menu interativo com a opção "Trocar Senha".
+* Janela de visualização detalhada das senhas no Vault com proteção contra exposição involuntária (senha mascarada por padrão, exibindo no máximo 16 caracteres).
+* Atualização do log de erros para arquivo **`logKeyGuard.log`** armazenado em pasta `.keyguard`.
+
+### Changed
+
+* Visualização principal do Vault agora mascara sempre as senhas para evitar exposição desnecessária.
+* Arquivo de log renomeado de `keyguard` para **`logKeyGuard.log`** para melhor clareza e organização.
+* Estrutura de segurança interna do arquivo criptografado otimizada, garantindo nonce determinístico de 96 bits derivado com HMAC-SHA-256 e autenticado por AAD.
+* Melhor gerenciamento de memória com zeroização explícita e técnicas de obfuscação de chaves em memória.
+
+### Fixed
+
+* Corrigido erro `AttributeError: '_tkinter.tkapp' object has no attribute '_pw'` ao cancelar a janela de senha-mestra inicial.
+* Corrigida a exibição da senha detalhada, garantindo que o botão "👁" funcione corretamente mesmo com senhas longas.
+
+### Security
+
+* Fortalecimento considerável da segurança do Vault com implementação do **KeyObfuscator**, protegendo chaves criptográficas contra extração indevida.
+* Zeroização aprimorada de dados sensíveis na memória utilizando o método `wipe()`.
+* Garantia adicional de integridade e confidencialidade das senhas armazenadas com a recriptografia segura ao alterar a senha-mestra.
+
+---
+
 ## \[1.3.2] – 2025‑05‑18
 
 ### Added
 
-* Implementação de **AAD (Associated Data)** para proteger o cabeçalho contra alterações não autorizadas.
-* Nonce de 96 bits determinístico derivado por HMAC-SHA-256, garantindo unicidade absoluta.
-* Zeroização explícita e segura na memória usando classe `SecureBytes`.
-* `mlock` opcional para fixar a chave criptográfica na RAM, minimizando riscos de exposição por dump de memória.
-* Botão **"Excluir"** no Vault para permitir a remoção de senhas salvas.
+* Implementação de **AAD (Associated Data)**.
+* Nonce determinístico derivado por HMAC-SHA-256.
+* Zeroização explícita com classe `SecureBytes`.
+* Botão **"Excluir"** no Vault.
 
 ### Changed
 
-* Cabeçalho de metadados agora utiliza versão explícita (`"v": 2`) para melhor controle e compatibilidade futura.
-* Melhorada a segurança do arquivo criptografado com metadados autenticados através de AAD.
-* Estrutura interna do arquivo `vault.enc` atualizada para incorporar segurança adicional e metadados explícitos (nonce determinístico e contador de gravações).
+* Cabeçalho com versão explícita (`"v": 2`).
+* Segurança aprimorada do arquivo criptografado.
 
 ### Fixed
 
-* Corrigido erro `AttributeError` relacionado ao uso inconsistente da variável de senha mestra (`self._password` para `self._pw`).
-* Reintrodução correta dos atalhos de teclado:
+* Correção do uso inconsistente da variável de senha mestra (`self._password` para `self._pw`).
+* Reintrodução correta dos atalhos:
 
   * <kbd>Ctrl + G</kbd>: Gerar nova senha.
   * <kbd>Ctrl + C</kbd>: Copiar senha.
-  * <kbd>Ctrl + L</kbd>: Limpar senha e área de transferência.
+  * <kbd>Ctrl + L</kbd>: Limpar senha.
   * <kbd>Esc</kbd>: Fechar aplicativo.
 
 ### Security
 
-* Fortalecida a resistência a ataques de força bruta com parâmetros robustos do Argon2id (1 GiB RAM, 16 iterações).
-* Proteção avançada contra ataques de replay ou manipulação do arquivo criptografado (nonce determinístico, contador e AAD).
-* Melhoria na higiene de memória com zeroização explícita e tentativa de uso do `mlock` para fixação na memória física.
+* Resistência aprimorada a ataques de força bruta e replay com parâmetros robustos de Argon2id e nonce determinístico autenticado por AAD.
 
 ---
 
@@ -40,25 +67,24 @@
 
 ### Added
 
-* **Botão “Limpar”** que apaga a senha exibida, zera a barra de força e limpa a área de transferência.
-* Atalho de teclado <kbd>Ctrl + L</kbd> para o mesmo comportamento do botão.
+* Botão "Limpar" com atalho <kbd>Ctrl + L</kbd>.
 
 ### Changed
 
-* O campo **Comprimento** agora aceita qualquer valor ≥ 1 (sem validação rígida no `Spinbox`).
+* Removida validação rígida do campo Comprimento.
 
 ### Removed
 
-* Cópia automática da senha ao gerar: agora a senha só vai para a área de transferência quando o usuário clicar em **Copiar**.
-* Janelas pop-up (`Messagebox`) de informação e erro, deixando a interface menos invasiva.
+* Cópia automática ao gerar senha.
+* Janelas pop-up (`Messagebox`).
 
 ### Fixed
 
-* O botão **Limpar** agora funciona corretamente: esvazia o clipboard, apaga o campo de senha, zera a barra de força e volta a ocultar a senha.
+* Corrigido funcionamento do botão "Limpar".
 
 ### Security
 
-* Reduzido o tempo de exposição da senha na área de transferência ao exigir ação manual e oferecer função de limpeza.
+* Redução do tempo de exposição de senhas.
 
 ---
 
@@ -66,21 +92,16 @@
 
 ### Added
 
-* Primeira versão funcional com:
-
-  * Gerador de senhas personalizável (comprimento, conjunto de caracteres).
-  * Barra de força de senha.
-  * Botões **Gerar**, **Copiar** e **Sair**.
-  * Tema claro/escuro (Flatly / Superhero) com switch.
-  * Salvamento opcional em arquivo de texto.
-  * Atalhos de teclado básicos (<kbd>Ctrl + G</kbd>, <kbd>Ctrl + C</kbd>, <kbd>Esc</kbd>).
+* Versão inicial funcional.
 
 ---
 
 **Legend**
 
-* *Added* – funcionalidade nova.
-* *Changed* – alteração de funcionalidade existente.
-* *Removed* – remoção de funcionalidade.
-* *Fixed* – correção de bug.
-* *Security* – mudanças que melhoram a segurança.
+* **Added** – Funcionalidade nova.
+* **Changed** – Alteração na funcionalidade existente.
+* **Removed** – Funcionalidade removida.
+* **Fixed** – Correção de erro.
+* **Security** – Melhorias relacionadas à segurança.
+
+---
