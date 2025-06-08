@@ -1,102 +1,95 @@
-# Secure Password Generator GUI
+### 🚀 **README.md**
+
+# 🔒 KeyGuard – Secure Password Manager
 
 ![license](https://img.shields.io/badge/license-Apache%202.0-blue.svg) ![python](https://img.shields.io/badge/python-3.8%2B-blue)
 
-A cross‑platform desktop application (Tkinter + ttkbootstrap) that generates cryptographically strong passwords, copies them to the clipboard, optionally saves them to a local file, and offers one‑click export as a standalone **.exe** via PyInstaller.
-
-> **Why?** Online random‑password sites leak entropy to the network and many GUI generators still rely on `random`. This project uses Pythonʼs [`secrets`](https://docs.python.org/3/library/secrets.html) module for true OS‑level randomness and keeps everything local.
+KeyGuard is a cross-platform, highly secure desktop application designed for managing and safeguarding your passwords. Built with Python's robust cryptography and security best practices, KeyGuard provides seamless encryption, memory protection, and advanced zeroization techniques.
 
 ---
 
-## ✨ Features
+## ✨ Key Features
 
-* **Cryptographically secure RNG** (`secrets.choice`)
-* **Theme switcher** – Dark (default) ↔ Light in real‑time
-* **Strength bar** – visual score (0‑100) based on length and class diversity
-* **Clipboard & auto‑copy** – plus a dedicated *Copy* button
-* **Optional local storage** – passwords saved plain‑text to `~/Documents/Senha/senha.txt` (disabled by default)
-* **One‑file build** – `pyinstaller --onefile --noconsole`
-* Runs on **Windows 10/11, macOS 12+, Linux (X11/Wayland)**
+* **Cryptographically Strong Encryption** – Uses Argon2id and AES-GCM to securely encrypt your data.
+* **Secure Memory Handling** – Implements zeroization and obfuscation techniques to ensure passwords and keys aren't exposed in memory.
+* **Master Password Management** – Allows secure changing of the master password, automatically re-encrypting the vault.
+* **Detailed Password Viewer** – Password masking by default with secure toggling visibility.
+* **Interactive Menu** – User-friendly interface with built-in password strength analysis.
+* **Portable Executable** – Easily build and distribute as a single-file binary via PyInstaller.
 
 ---
 
-## 📦 Getting Started
+## 📦 Getting Started
 
-### Prerequisites
+### Requirements
 
-* Python ≥ 3.8 ([https://www.python.org/downloads/](https://www.python.org/downloads/))
-* `pip install ttkbootstrap`
+* Python 3.8 or higher ([download](https://www.python.org/downloads/))
+* Dependencies: `ttkbootstrap`, `cryptography`, `argon2-cffi`
 
 ```bash
-# clone the repo
-$ git clone https://github.com/youruser/secure-pass-gen.git
-$ cd secure-pass-gen
+# Clone repository
+git clone https://github.com/youruser/keyguard.git
+cd keyguard
 
-# (optional) create a virtual env
-$ python -m venv .venv && .\.venv\Scripts\activate  # Windows
+# Create a virtual environment (optional but recommended)
+python -m venv .venv
+source .venv/bin/activate   # Linux/macOS
+.\.venv\Scripts\activate    # Windows
 
-# install dependencies
-$ pip install -r requirements.txt   # only ttkbootstrap + pyinstaller for build
+# Install dependencies
+pip install -r requirements.txt
 ```
 
-### Run in dev mode
+### Running KeyGuard
 
 ```bash
-python src/passgen_gui.py
+python src/KeyGuard.py
 ```
 
-### Build a standalone *.exe* (Windows)
+### Building Standalone Executable
 
 ```bash
-pyinstaller --onefile --noconsole --icon=assets/key.ico src/passgen_gui.py
+pyinstaller --onefile --noconsole --icon=assets/key.ico src/KeyGuard.py
 ```
 
-Output will be in `dist/passgen_gui.exe`.
+Executable will be available at `dist/KeyGuard.exe`.
 
 ---
 
-## 🛠️ Usage
+## 🛡️ Security & Privacy
 
-1. Choose the **length** (default 16).
-2. Select the **character set**: numbers, letters, alphanum, or *all*.
-3. *(Optional)* toggle **Save to file** and enter an application label.
-4. Click **Generate** – the password is shown, copied to clipboard, and the strength bar updates.
-5. **Copy** again later or hit **Clear** to reset the form.
+KeyGuard never transmits or exposes your passwords online. All sensitive information is securely encrypted, stored locally, and managed entirely offline.
 
----
-
-## 🔧 Configuration
-
-All user data is stored locally:
-
-| Path                          | Purpose                   | Created                             |  Secure?                                  |
-| ----------------------------- | ------------------------- | ----------------------------------- | ----------------------------------------- |
-| `~/Documents/Senha/senha.txt` | password log (plain‑text) | When *Salvar em arquivo* is checked | **No** – disable if security is a concern |
-
-If you need encrypted storage, integrate [`cryptography.Fernet`](https://cryptography.io/) or a secrets‑manager.
+| File                        | Purpose                  | Encrypted?                         |
+| --------------------------- | ------------------------ | ---------------------------------- |
+| `.keyguard/vault.kgv`       | Encrypted password vault | ✅ AES-GCM                          |
+| `.keyguard/logKeyGuard.log` | Application error log    | ❌ Plain text (no passwords logged) |
 
 ---
 
 ## 🤝 Contributing
 
-1. Fork the project
-2. Create your feature branch (`git checkout -b feature/awesome`)
-3. Commit your changes (`git commit -m 'feat: add awesome'`)
-4. Push to the branch (`git push origin feature/awesome`)
-5. Open a pull request
+Contributions are welcome! Please follow these steps:
 
-All PRs must pass **pre‑commit** hooks (`black`, `flake8`, `isort`) and include unit tests.
+1. Fork the repository.
+2. Create your feature branch (`git checkout -b feature/your-feature`).
+3. Commit your changes (`git commit -m "feat: describe your feature"`).
+4. Push your changes (`git push origin feature/your-feature`).
+5. Open a pull request.
+
+All pull requests must pass pre-commit hooks (`black`, `flake8`, `isort`) and include unit tests when applicable.
 
 ---
 
 ## 📜 License
 
-- Licensed under the [Apache 2.0 License](LICENSE).
+Licensed under [Apache 2.0 License](LICENSE).
+
 ---
 
-## 🙏 Acknowledgements
+## 🙏 Acknowledgments
 
-* [Tkinter](https://docs.python.org/3/library/tkinter.html) – native GUI toolkit
-* [ttkbootstrap](https://github.com/israel-dryer/ttkbootstrap) – modern themes + widgets
-* [PyInstaller](https://www.pyinstaller.org/) – freezing Python apps
-* [shields.io](https://shields.io/) – README badges
+* [Python Cryptography](https://cryptography.io/)
+* [Tkinter](https://docs.python.org/3/library/tkinter.html)
+* [ttkbootstrap](https://github.com/israel-dryer/ttkbootstrap)
+* [PyInstaller](https://www.pyinstaller.org/)
