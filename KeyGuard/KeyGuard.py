@@ -53,6 +53,7 @@ from tkinter import simpledialog as sd
 
 # NOVO: Verificação de dependências antes de usar
 import importlib
+import importlib.util
 
 def check_dependencies():
     """Para o programa com mensagem clara se faltar algo crítico."""
