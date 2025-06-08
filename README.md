@@ -28,7 +28,7 @@ KeyGuard is a cross-platform, highly secure desktop application designed for man
 
 ```bash
 # Clone repository
-git clone https://github.com/youruser/keyguard.git
+git clone [https://github.com/youruser/keyguard.git](https://github.com/Crypt-Guard/KeyGuard.git)
 cd keyguard
 
 # Create a virtual environment (optional but recommended)
