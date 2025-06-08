@@ -23,7 +23,6 @@ Melhorias de segurança v3.0.1:
 
 from __future__ import annotations
 
-import base64
 import ctypes
 import hashlib
 import hmac
@@ -42,14 +41,10 @@ import sys
 import tempfile
 import threading
 import time
-from contextlib import contextmanager
 import warnings
-from collections import Counter
 from dataclasses import dataclass
-from datetime import datetime
-from enum import Enum
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple, Union
+from typing import Dict, List, Optional, Tuple, Union
 
 # GUI imports
 import tkinter as tk
@@ -335,8 +330,8 @@ class ProcessProtection:
                 kernel32 = ctypes.WinDLL("kernel32")
                 if kernel32.IsDebuggerPresent():
                     self.debugger_detected = True
-            except:
-                pass
+            except Exception as e:
+                logger.debug("Debugger check failed: %s", e)
 
 
 # Instância global
@@ -722,8 +717,8 @@ class SecureMemory:
                     MCL_CURRENT = 1
                     MCL_FUTURE = 2
                     libc.mlockall(MCL_CURRENT | MCL_FUTURE)
-                except:
-                    pass
+                except OSError as e:
+                    logger.debug("mlockall failed: %s", e)
                         
             self._protected = True
             
@@ -1179,15 +1174,15 @@ class StorageBackend:
         if self._lock_file:
             try:
                 self._lock_file.close()
-            except:
-                pass
+            except OSError as e:
+                logger.debug("Erro ao fechar lock: %s", e)
             finally:
                 self._lock_file = None
             
             try:
                 self.lock_path.unlink()
-            except:
-                pass
+            except OSError as e:
+                logger.debug("Erro ao remover lock file: %s", e)
     
     def write_atomic(self, data: bytes) -> None:
         """MELHORADO: Escrita atômica com segurança aprimorada."""
@@ -2573,8 +2568,8 @@ def main():
         try:
             if 'app' in locals() and hasattr(app, 'vault'):
                 app.vault.close()
-        except:
-            pass
+        except Exception as e:
+            logger.debug("Erro ao fechar vault na saída: %s", e)
 
 if __name__ == "__main__":
     main()

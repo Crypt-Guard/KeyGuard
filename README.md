@@ -24,12 +24,12 @@ KeyGuard is a cross-platform, highly secure desktop application designed for man
 ### Requirements
 
 * Python 3.8 or higher ([download](https://www.python.org/downloads/))
-* Dependencies: `ttkbootstrap`, `cryptography`, `argon2-cffi`
+* Dependencies: `ttkbootstrap`, `cryptography`, `argon2-cffi`, `psutil`
 
 ```bash
 # Clone repository
 git clone [https://github.com/Crypt-Guard/KeyGuard.git]
-cd keyguard
+cd KeyGuard
 
 # Create a virtual environment (optional but recommended)
 python -m venv .venv
@@ -43,13 +43,13 @@ pip install -r requirements.txt
 ### Running KeyGuard
 
 ```bash
-python src/KeyGuard.py
+python KeyGuard/KeyGuard.py
 ```
 
 ### Building Standalone Executable
 
 ```bash
-pyinstaller --onefile --noconsole --icon=assets/key.ico src/KeyGuard.py
+pyinstaller --onefile --noconsole --icon=assets/key.ico KeyGuard/KeyGuard.py
 ```
 
 Executable will be available at `dist/KeyGuard.exe`.
