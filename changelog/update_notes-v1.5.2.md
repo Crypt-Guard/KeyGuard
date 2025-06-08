@@ -2,6 +2,38 @@
 
 ---
 
+## \[3.0.0] – 2025‑06‑08
+
+### Added
+
+* **Vault streaming**: Real-time encrypted data handling, minimizing plaintext exposure.
+* Enhanced GUI interface, combining usability of KeyGuard 2.0 with advanced security features from 3.0.
+* Advanced memory management via `SecureMemory` for handling sensitive information securely.
+* Flatpak support for Linux distribution, ensuring sandboxed execution.
+* Robust protection against memory dumps and debugging attacks.
+* Automatic Argon2 parameter tuning for optimal security-performance balance.
+
+### Changed
+
+* Refactored internal architecture for modularity and maintainability.
+* Improved zeroization technique: all secrets are securely wiped immediately after usage.
+* Reimplemented secure logging, ensuring no sensitive data is ever stored in logs.
+* Vault re-encryption now occurs seamlessly when changing the master password, enhancing security and convenience.
+
+### Fixed
+
+* Fixed GUI responsiveness issues when handling large vault files.
+* Corrected rare errors during master password change affecting vault re-encryption integrity.
+* Resolved inconsistencies in the memory obfuscation of sensitive keys.
+
+### Security
+
+* Significant improvements through **KeyObfuscator 2.0**, enhancing resistance against RAM inspection attacks.
+* Strengthened Argon2id usage with dynamic difficulty adjustment.
+* Implemented safeguards against double-free vulnerabilities in memory management.
+
+---
+
 ## \[1.5.2] – 2025‑05‑18
 
 ### Added
