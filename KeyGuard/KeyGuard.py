@@ -79,8 +79,7 @@ def validate_system_requirements():
         warnings.warn("Só 1 núcleo de CPU – desempenho pode ser baixo.", RuntimeWarning)
 
 # CORRIGIDO: Logger stub para evitar NameError em SecurityWarning
-logger = logging.getLogger('keyguard')          # stub evita NameError
-logger.addHandler(logging.NullHandler())
+logger = None  # Será inicializado propriamente após setup_secure_logging()
 
 # -----------------------------------------------------------------------------
 #  ⚠️  Aviso específico de segurança
@@ -156,19 +155,23 @@ class SecurityWarning(UserWarning):
     
     def _auto_log(self):
         """Log automático baseado na gravidade do aviso."""
-        log = logging.getLogger('keyguard')  # <-- resolve em tempo de execução
+        global logger
+        # Verificar se logger foi inicializado
+        if logger is None:
+            return
+        
         message = f"[{self.severity.upper()}] {self.category}: {str(self)}"
         if self.recommendation:
             message += f" | Recomendação: {self.recommendation}"
         
         if self.severity == 'critical':
-            log.critical(message)
+            logger.critical(message)
         elif self.severity == 'high':
-            log.error(message)
+            logger.error(message)
         elif self.severity == 'medium':
-            log.warning(message)
+            logger.warning(message)
         else:  # low
-            log.info(message)
+            logger.info(message)
     
     @classmethod
     def get_security_metrics(cls) -> Dict[str, int]:
@@ -624,7 +627,8 @@ def setup_secure_logging():
     
     return logger
 
-logger = setup_secure_logging()   # linha original permanece
+# Inicializar logger global após a função estar definida
+logger = setup_secure_logging()
 
 # ============================= SECURITY UTILITIES ============================
 
@@ -875,6 +879,10 @@ class KeyObfuscator:
         Se já estava ofuscado, primeiro recupera o plaintext,
         depois descarta artefatos antigos e monta novos.
         """
+        # Proteção contra re-obfuscação durante limpeza
+        if self._key is None and self._obfuscated:
+            return  # Já está ofuscado e sem chave, nada a fazer
+            
         if self._obfuscated:
             # 1.  recuperar chave em claro
             plain_sm = self.deobfuscate()        # usa _frags+_mask
@@ -1230,6 +1238,11 @@ class StorageBackend:
                     import ntsecuritycon as nsec
                 except ImportError:
                     win32security = win32api = nsec = None
+                    # Avisar usuário sobre funcionalidade reduzida
+                    warn_file_permissions(
+                        "pywin32 não instalado - permissões de arquivo usando fallback menos seguro",
+                        severity='medium'
+                    )
                 
                 if win32security and win32api and nsec:
                     # Obter SID do usuário atual
@@ -2181,9 +2194,8 @@ class KeyGuardApp(ttk.Window):
             # Verificar se é um número válido
             try:
                 num = int(value)
-                # Permitir valores entre 1-999 durante digitação
-                # A validação final será feita ao gerar a senha
-                return 1 <= num <= 999
+                # Consistente com os limites do spinbox e da geração
+                return 1 <= num <= 128
             except ValueError:
                 return False
         
@@ -2412,7 +2424,7 @@ class KeyGuardApp(ttk.Window):
     # ---------- suporte a reordenação ----------
     def _persist_order(self, new_order: list[str]):
         """Salva nova ordem das entradas preservando senhas (operação atômica)."""
-        if set(new_order) != set(self.vault.entries):
+        if set(new_order) != set(self.vault.entries.keys()):
             return
         
         # Atualiza a ordem no vault
@@ -2451,11 +2463,12 @@ class KeyGuardApp(ttk.Window):
         # Auto-ocultar após 10 segundos
         def auto_hide():
             try:
-                if dlg.winfo_exists():
+                # Verificar se a janela ainda existe e não foi destruída
+                if dlg and dlg.winfo_exists():
                     var_eye.set(0)
                     lbl.config(text=mask)
-            except tk.TclError:
-                pass  # Janela já foi fechada
+            except (tk.TclError, AttributeError):
+                pass  # Janela já foi fechada ou coletada pelo GC
         
         dlg.after(Config.AUTO_HIDE_DELAY, auto_hide)
 
@@ -2515,7 +2528,7 @@ class KeyGuardApp(ttk.Window):
 
 def main():
     """Função principal."""
-    import logging.handlers  # garante RotatingFileHandler
+    # Imports já realizados no topo do arquivo
     
     # NOVO: Verificação inicial de segurança
     try:
