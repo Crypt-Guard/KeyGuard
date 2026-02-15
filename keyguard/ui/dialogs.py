@@ -5,7 +5,7 @@ from __future__ import annotations
 import tkinter as tk
 from tkinter import messagebox as mb
 
-import ttkbootstrap as ttk
+from keyguard.ui.ttk_compat import ttk
 
 from keyguard.util.memory import SecureMemory
 

@@ -5,9 +5,7 @@ from __future__ import annotations
 import string
 import tkinter as tk
 
-import ttkbootstrap as ttk
-from ttkbootstrap.constants import DANGER, INFO, PRIMARY, SUCCESS
-from ttkbootstrap.tooltip import ToolTip
+from keyguard.ui.ttk_compat import DANGER, INFO, PRIMARY, SUCCESS, ToolTip, ttk
 
 from keyguard.config import CHARSETS, MIN_TOTAL_BITS, OPT_TO_KEY, Config
 
@@ -18,7 +16,7 @@ def build_main_view(app) -> None:
     container.place(relx=0.5, rely=0.5, anchor="c")
 
     # ----- parameters frame -----
-    frm = ttk.LabelFrame(container, text="Parâmetros")
+    frm = ttk.Labelframe(container, text="Parâmetros")
     frm.grid(row=0, column=0, sticky="n")
     frm.columnconfigure(1, weight=1)
 

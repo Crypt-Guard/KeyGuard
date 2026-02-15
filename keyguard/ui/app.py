@@ -12,13 +12,11 @@ from tkinter import messagebox as mb
 from tkinter import simpledialog as sd
 from typing import Optional
 
-import ttkbootstrap as ttk
-from ttkbootstrap.constants import INFO
-
 from keyguard.config import CHARSETS, MIN_TOTAL_BITS, OPT_TO_KEY, Config
 from keyguard.crypto.engine import CryptoEngine, PasswordGenerator
 from keyguard.storage.backend import StorageBackend
 from keyguard.ui.dialogs import SecurePasswordDialog
+from keyguard.ui.ttk_compat import INFO, ttk
 from keyguard.ui.views import build_main_view, build_vault_viewer
 from keyguard.util.memory import PasswordTimeout, SecureMemory
 from keyguard.vault.manager import VaultManager

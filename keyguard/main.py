@@ -6,6 +6,14 @@ import logging
 import os
 import sys
 
+# Support direct execution via file path (e.g., ``python keyguard/main.py``)
+if __package__ in (None, ""):
+    from pathlib import Path
+
+    _project_root = Path(__file__).resolve().parent.parent
+    if str(_project_root) not in sys.path:
+        sys.path.insert(0, str(_project_root))
+
 logger = logging.getLogger("keyguard")
 
 
