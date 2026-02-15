@@ -1,0 +1,40 @@
+[build-system]
+requires = ["setuptools>=64"]
+build-backend = "setuptools.backends._legacy:_Backend"
+
+[project]
+name = "keyguard"
+version = "4.0.0"
+description = "Secure Password Manager"
+requires-python = ">=3.9"
+license = "Apache-2.0"
+dependencies = [
+    "argon2-cffi",
+    "cryptography",
+    "psutil",
+    "ttkbootstrap",
+    "platformdirs",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0",
+    "pytest-cov",
+    "ruff",
+    "black",
+]
+
+[project.scripts]
+keyguard = "keyguard.main:main"
+
+[tool.ruff]
+line-length = 100
+target-version = "py39"
+select = ["E", "F", "W", "I", "B"]
+
+[tool.black]
+line-length = 100
+target-version = ["py39"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

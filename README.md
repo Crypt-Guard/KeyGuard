@@ -1,95 +1,148 @@
-### 🚀 **README.md**
+# KeyGuard – Secure Password Manager
 
-# 🔒 KeyGuard – Secure Password Manager
+![license](https://img.shields.io/badge/license-Apache%202.0-blue.svg) ![python](https://img.shields.io/badge/python-3.9%2B-blue)
 
-![license](https://img.shields.io/badge/license-Apache%202.0-blue.svg) ![python](https://img.shields.io/badge/python-3.8%2B-blue)
-
-KeyGuard is a cross-platform, highly secure desktop application designed for managing and safeguarding your passwords. Built with Python's robust cryptography and security best practices, KeyGuard provides seamless encryption, memory protection, and advanced zeroization techniques.
-
----
-
-## ✨ Key Features
-
-* **Cryptographically Strong Encryption** – Uses Argon2id and AES-GCM to securely encrypt your data.
-* **Secure Memory Handling** – Implements zeroization and obfuscation techniques to ensure passwords and keys aren't exposed in memory.
-* **Master Password Management** – Allows secure changing of the master password, automatically re-encrypting the vault.
-* **Detailed Password Viewer** – Password masking by default with secure toggling visibility.
-* **Interactive Menu** – User-friendly interface with built-in password strength analysis.
-* **Portable Executable** – Easily build and distribute as a single-file binary via PyInstaller.
+KeyGuard is a cross-platform desktop password manager built with Python.
+It uses Argon2id key derivation, ChaCha20-Poly1305 AEAD encryption, and secure memory handling to protect your passwords.
 
 ---
 
-## 📦 Getting Started
+## Features
+
+- **Argon2id + ChaCha20-Poly1305** — industry-standard KDF and AEAD
+- **Self-descriptive vault header** — KDF parameters stored in the vault (v4 format)
+- **Configurable KDF profiles** — `compat` (64 MiB), `balanced` (256 MiB), `high` (512 MiB)
+- **Secure memory** — mlock/VirtualLock, multi-pass wipe, key obfuscation
+- **Cross-platform** — Windows + Linux (XDG-compliant directories via `platformdirs`)
+- **Auto-migration** — v3 vaults and legacy `~/.keyguard3` directories migrate automatically
+- **Clipboard safety** — auto-clears clipboard after 15 seconds
+- **GUI** — Tkinter/ttkbootstrap with vault viewer, search, drag-and-drop reorder
+
+---
+
+## Getting Started
 
 ### Requirements
 
-* Python 3.8 or higher ([download](https://www.python.org/downloads/))
-* Dependencies: `ttkbootstrap`, `cryptography`, `argon2-cffi`, `psutil`
+- Python 3.9+
+- Dependencies: `argon2-cffi`, `cryptography`, `psutil`, `ttkbootstrap`, `platformdirs`
+
+### Install
 
 ```bash
-# Clone repository
-git clone [https://github.com/Crypt-Guard/KeyGuard.git]
+git clone https://github.com/Crypt-Guard/KeyGuard.git
 cd KeyGuard
 
-# Create a virtual environment (optional but recommended)
+# (Optional) virtual environment
 python -m venv .venv
 source .venv/bin/activate   # Linux/macOS
-.\.venv\Scripts\activate    # Windows
+# .venv\Scripts\activate    # Windows
 
-# Install dependencies
-pip install -r requirements.txt
+# Install
+pip install -e ".[dev]"
 ```
 
-### Running KeyGuard
+### Run
 
 ```bash
-python KeyGuard/KeyGuard.py
+python -m keyguard
+# or, after pip install:
+keyguard
 ```
 
-### Building Standalone Executable
+### Run Tests
 
 ```bash
-pyinstaller --onefile --noconsole --icon=assets/key.ico KeyGuard/KeyGuard.py
+pytest tests/ -v
 ```
 
-Executable will be available at `dist/KeyGuard.exe`.
+### Lint / Format
+
+```bash
+pip install ruff black
+ruff check keyguard/ tests/
+black --check keyguard/ tests/
+```
 
 ---
 
-## 🛡️ Security & Privacy
+## Project Structure
 
-KeyGuard never transmits or exposes your passwords online. All sensitive information is securely encrypted, stored locally, and managed entirely offline.
-
-| File                        | Purpose                  | Encrypted?                         |
-| --------------------------- | ------------------------ | ---------------------------------- |
-| `.keyguard/vault.kgv`       | Encrypted password vault | ✅ AES-GCM                          |
-| `.keyguard/logKeyGuard.log` | Application error log    | ❌ Plain text (no passwords logged) |
+```
+keyguard/
+  __init__.py              # version, dependency check
+  main.py                  # entrypoint
+  config.py                # Config, KDF profiles, config.ini I/O
+  paths.py                 # cross-platform dirs, legacy migration
+  logging_setup.py         # secure logging
+  crypto/
+    engine.py              # CryptoEngine, PasswordGenerator
+    formats.py             # VaultHeaderV3/V4, constants
+  storage/
+    backend.py             # atomic writes, backup, locking
+  vault/
+    models.py              # VaultEntry
+    manager.py             # VaultManager, v3→v4 migration
+  ui/
+    dialogs.py             # SecurePasswordDialog
+    app.py                 # KeyGuardApp
+    views.py               # UI builders
+  util/
+    memory.py              # SecureMemory, KeyObfuscator, TimedExposure
+    rate_limit.py          # RateLimiter
+    platform_harden.py     # OS hardening (no debug detection)
+tests/
+  test_crypto.py
+  test_formats.py
+  test_storage.py
+  test_vault.py
+  test_migration.py
+  test_memory.py
+  test_password_gen.py
+  test_rate_limit.py
+```
 
 ---
 
-## 🤝 Contributing
+## Data Directories
 
-Contributions are welcome! Please follow these steps:
+| OS      | Location                                  |
+|---------|-------------------------------------------|
+| Linux   | `~/.local/share/KeyGuard/`                |
+| Windows | `%LOCALAPPDATA%\CryptGuard\KeyGuard\`     |
+| macOS   | `~/Library/Application Support/KeyGuard/` |
 
-1. Fork the repository.
-2. Create your feature branch (`git checkout -b feature/your-feature`).
-3. Commit your changes (`git commit -m "feat: describe your feature"`).
-4. Push your changes (`git push origin feature/your-feature`).
-5. Open a pull request.
-
-All pull requests must pass pre-commit hooks (`black`, `flake8`, `isort`) and include unit tests when applicable.
+Legacy `~/.keyguard3` directories are auto-migrated on first run.
 
 ---
 
-## 📜 License
+## Vault Migration (v3 → v4)
 
-Licensed under [Apache 2.0 License](LICENSE).
+When KeyGuard opens a v3 vault (`KG3` magic):
+
+1. Decrypts using config.ini KDF params as fallback
+2. Creates a timestamped backup (`.v3backup-<timestamp>`)
+3. Re-saves in v4 format with KDF parameters embedded in the header
+4. Future opens use the self-descriptive v4 header (no external config dependency)
 
 ---
 
-## 🙏 Acknowledgments
+## Security & Privacy
 
-* [Python Cryptography](https://cryptography.io/)
-* [Tkinter](https://docs.python.org/3/library/tkinter.html)
-* [ttkbootstrap](https://github.com/israel-dryer/ttkbootstrap)
-* [PyInstaller](https://www.pyinstaller.org/)
+- All data stored locally, never transmitted
+- No debugger detection or kill switches (removed in v4.0)
+- OS hardening: DEP enforcement (Windows), core dump disable (Linux), DLL restriction
+- Secrets never logged; log rotation with restricted permissions
+
+| File                   | Purpose                | Encrypted |
+|------------------------|------------------------|-----------|
+| `vault.kg3`            | Password vault         | ChaCha20-Poly1305 |
+| `vault.kg3.backup`     | Automatic backup       | ChaCha20-Poly1305 |
+| `keyguard.log`         | Application log        | No (no secrets) |
+| `config.ini`           | KDF calibration result | No |
+
+---
+
+## License
+
+[Apache 2.0](LICENSE)

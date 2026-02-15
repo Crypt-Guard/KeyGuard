@@ -2,3 +2,4 @@ argon2-cffi
 cryptography
 psutil
 ttkbootstrap
+platformdirs
